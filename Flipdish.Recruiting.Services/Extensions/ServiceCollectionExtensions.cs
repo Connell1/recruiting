@@ -10,7 +10,8 @@ namespace Flipdish.Recruiting.Services.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services
-                .AddTransient<Services.IEmailService, Services.EmailService>();
+                .AddTransient<Services.IEmailService, Services.EmailService>()
+                .AddTransient<Services.IQueryParsingService, Services.QueryParsingService>();
         }
     }
 }
