@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Flipdish.Recruiting.Domain</RootNamespace>
+    <AssemblyName>Flipdish.Recruiting.Domain</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flipdish.Recruiting.WebhookReceiver\Flipdish.Recruiting.WebhookReceiver.csproj" />
+  </ItemGroup>
+
+</Project>
