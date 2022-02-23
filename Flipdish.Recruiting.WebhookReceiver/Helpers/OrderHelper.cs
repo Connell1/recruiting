@@ -1,4 +1,4 @@
-using Flipdish.Recruiting.WebhookReceiver.Models;
+using Flipdish.Recruiting.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

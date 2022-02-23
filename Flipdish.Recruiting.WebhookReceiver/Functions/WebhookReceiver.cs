@@ -8,7 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Flipdish.Recruiting.WebhookReceiver.Models;
+using Flipdish.Recruiting.Domain.Models;
 using System.Collections.Generic;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions

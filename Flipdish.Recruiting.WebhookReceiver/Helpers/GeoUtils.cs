@@ -1,5 +1,5 @@
 ﻿
-using Flipdish.Recruiting.WebhookReceiver.Models;
+using Flipdish.Recruiting.Domain.Models;
 using System;
 using System.Globalization;
 
