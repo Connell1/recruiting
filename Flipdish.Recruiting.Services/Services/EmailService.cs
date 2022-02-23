@@ -1,13 +1,20 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.IO;
 
-namespace Flipdish.Recruiting.WebhookReceiver
+namespace Flipdish.Recruiting.Services.Services
 {
-    class EmailService
+    public interface IEmailService
     {
-        public static async Task Send(string from, IEnumerable<string> to, string subject, string body, Dictionary<string, Stream> attachements, IEnumerable<string> cc = null)
+        Task Send(string from, IEnumerable<string> to, string subject, string body, Dictionary<string, Stream> attachements, IEnumerable<string> cc = null);
+    }
+
+    internal class EmailService : IEmailService
+    {
+        public async Task Send(string from, IEnumerable<string> to, string subject, string body, Dictionary<string, Stream> attachements, IEnumerable<string> cc = null)
         {
             using MailMessage mailMessage = new MailMessage
             {
@@ -28,7 +35,7 @@ namespace Flipdish.Recruiting.WebhookReceiver
                     mailMessage.To.Add(t);
                 }
             }
-            foreach(var nameAndStreamPair in attachements)
+            foreach (var nameAndStreamPair in attachements)
             {
                 var attachment = new Attachment(nameAndStreamPair.Value, nameAndStreamPair.Key);
                 attachment.ContentId = nameAndStreamPair.Key;

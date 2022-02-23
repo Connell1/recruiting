@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.22" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Flipdish.Recruiting.Domain\Flipdish.Recruiting.Domain.csproj" />
   </ItemGroup>
 

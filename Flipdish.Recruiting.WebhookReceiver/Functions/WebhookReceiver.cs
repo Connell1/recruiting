@@ -10,11 +10,19 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Flipdish.Recruiting.Domain.Models;
 using System.Collections.Generic;
+using Flipdish.Recruiting.Services.Services;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
     public class WebhookReceiver
     {
+        private readonly IEmailService emailService;
+
+        public WebhookReceiver(IEmailService emailService)
+        {
+            this.emailService = emailService;
+        }
+
         [FunctionName("WebhookReceiver")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
@@ -67,7 +75,7 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
 
                 try
                 {
-                    EmailService.Send("", req.Query["to"], $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
+                    await emailService.Send("", req.Query["to"], $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
                 }
                 catch(Exception ex)
                 {
