@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.Domain"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.UnitTest", "Flipdish.Recruiting.UnitTest\Flipdish.Recruiting.UnitTest.csproj", "{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.Services", "Flipdish.Recruiting.Services\Flipdish.Recruiting.Services.csproj", "{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

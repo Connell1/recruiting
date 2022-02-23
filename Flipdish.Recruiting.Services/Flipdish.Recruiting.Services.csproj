@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Flipdish.Recruiting.Services</RootNamespace>
+    <AssemblyName>Flipdish.Recruiting.Services</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flipdish.Recruiting.Domain\Flipdish.Recruiting.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

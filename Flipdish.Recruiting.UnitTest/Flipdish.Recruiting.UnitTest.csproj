@@ -20,4 +20,13 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Flipdish.Recruiting.WebhookReceiver\Flipdish.Recruiting.WebhookReceiver.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\TestData\" />
+    <Folder Include="WebhookReceiver\Functions\" />
+  </ItemGroup>
+
 </Project>

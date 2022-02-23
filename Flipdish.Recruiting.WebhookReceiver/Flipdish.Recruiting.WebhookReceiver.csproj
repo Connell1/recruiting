@@ -46,5 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Flipdish.Recruiting.Domain\Flipdish.Recruiting.Domain.csproj" />
+    <ProjectReference Include="..\Flipdish.Recruiting.Services\Flipdish.Recruiting.Services.csproj" />
   </ItemGroup>
 </Project>

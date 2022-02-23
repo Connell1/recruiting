@@ -13,10 +13,10 @@ using System.Collections.Generic;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
-    public static class WebhookReceiver
+    public class WebhookReceiver
     {
         [FunctionName("WebhookReceiver")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
@@ -25,28 +25,7 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
-
-                OrderCreatedWebhook orderCreatedWebhook;
-
-                string test = req.Query["test"];
-                if(req.Method == "GET" && !string.IsNullOrEmpty(test))
-                {
-
-                    var templateFilePath = Path.Combine(context.FunctionAppDirectory, "TestWebhooks", test);
-                    var testWebhookJson = new StreamReader(templateFilePath).ReadToEnd();
-
-                    orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(testWebhookJson);
-                }
-                else if (req.Method == "POST")
-                {
-                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                    orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(requestBody);
-                }
-                else
-                {
-                    throw new Exception("No body found or test param.");
-                }
-                OrderCreatedEvent orderCreatedEvent = orderCreatedWebhook.Body;
+                OrderCreatedEvent orderCreatedEvent = await GetOrderCreatedWebhook(req, context);
 
                 orderId = orderCreatedEvent.Order.OrderId;
                 List<int> storeIds = new List<int>();
@@ -104,6 +83,31 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                 log.LogError(ex, $"Error occured during processing order #{orderId}");
                 throw ex;
             }
+        }
+
+        private async Task<OrderCreatedEvent> GetOrderCreatedWebhook(HttpRequest req, ExecutionContext context)
+        {
+            OrderCreatedWebhook orderCreatedWebhook;
+
+            string testFile = req.Query["test"];
+            if (req.Method == HttpMethods.Get && !string.IsNullOrEmpty(testFile))
+            {
+
+                var templateFilePath = Path.Combine(context.FunctionAppDirectory, "TestWebhooks", testFile);
+                var testWebhookJson = new StreamReader(templateFilePath).ReadToEnd();
+
+                orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(testWebhookJson);
+            }
+            else if (req.Method == HttpMethods.Post)
+            {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(requestBody);
+            }
+            else
+            {
+                throw new Exception("No body found or test param.");
+            }
+            return orderCreatedWebhook.Body;
         }
     }
 }
