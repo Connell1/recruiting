@@ -11,16 +11,20 @@ using Newtonsoft.Json;
 using Flipdish.Recruiting.Domain.Models;
 using System.Collections.Generic;
 using Flipdish.Recruiting.Services.Services;
+using Flipdish.Recruiting.Domain.Models.Input;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
     public class WebhookReceiver
     {
         private readonly IEmailService emailService;
+        private readonly IQueryParsingService queryParsingService;
 
-        public WebhookReceiver(IEmailService emailService)
+        public WebhookReceiver(IEmailService emailService,
+            IQueryParsingService queryParsingService)
         {
             this.emailService = emailService;
+            this.queryParsingService = queryParsingService;
         }
 
         [FunctionName("WebhookReceiver")]
@@ -34,48 +38,33 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
                 OrderCreatedEvent orderCreatedEvent = await GetOrderCreatedWebhook(req, context);
+                WebhookReceiverQuery query = queryParsingService.Parse(req.Query);
 
                 orderId = orderCreatedEvent.Order.OrderId;
-                List<int> storeIds = new List<int>();
-                string[] storeIdParams = req.Query["storeId"].ToArray();
-                if (storeIdParams.Length > 0)
-                {
-                    foreach (var storeIdString in storeIdParams)
-                    {
-                        int storeId = 0;
-                        try 
-                        {
-                            storeId = int.Parse(storeIdString);
-                        }
-                        catch(Exception) {}
-                        
-                        storeIds.Add(storeId);
-                    }
 
-                    if (!storeIds.Contains(orderCreatedEvent.Order.Store.Id.Value))
+                if (query.StoreIDs.Any())
+                {
+                    if (!query.StoreIDs.Contains(orderCreatedEvent.Order.Store.Id.Value))
                     {
                         log.LogInformation($"Skipping order #{orderId}");
                         return new ContentResult { Content = $"Skipping order #{orderId}", ContentType = "text/html" };
                     }
                 }
 
-
                 Currency currency = Currency.EUR;
-                var currencyString = req.Query["currency"].FirstOrDefault();
+                var currencyString = query.Currency;
                 if(!string.IsNullOrEmpty(currencyString) && Enum.TryParse(typeof(Currency), currencyString.ToUpper(), out object currencyObject))
                 {
                     currency = (Currency)currencyObject;
                 }
 
-                var barcodeMetadataKey = req.Query["metadataKey"].First() ?? "eancode";
-
-                using EmailRenderer emailRenderer = new EmailRenderer(orderCreatedEvent.Order, orderCreatedEvent.AppId, barcodeMetadataKey, context.FunctionAppDirectory, log, currency);
+                using EmailRenderer emailRenderer = new EmailRenderer(orderCreatedEvent.Order, orderCreatedEvent.AppId, query.MetadataKey, context.FunctionAppDirectory, log, currency);
                 
                 var emailOrder = emailRenderer.RenderEmailOrder();
 
                 try
                 {
-                    await emailService.Send("", req.Query["to"], $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
+                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
                 }
                 catch(Exception ex)
                 {

@@ -14,6 +14,6 @@ namespace Flipdish.Recruiting.Domain.Models.Input
         [JsonProperty("metadatakey")]
         public string MetadataKey { get; set; }
         [JsonProperty("storeid")]
-        public IEnumerable<int> StoreID { get; set; }
+        public IEnumerable<int> StoreIDs { get; set; }
     }
 }

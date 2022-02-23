@@ -13,6 +13,7 @@ namespace Flipdish.Recruiting.Services.Services
     public interface IQueryParsingService
     {
         T Parse<T>(IQueryCollection queryCollection);
+        WebhookReceiverQuery Parse(IQueryCollection queryCollection);
     }
 
     internal class QueryParsingService : IQueryParsingService
@@ -34,6 +35,26 @@ namespace Flipdish.Recruiting.Services.Services
             }
             string json = JsonConvert.SerializeObject(dict);
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public WebhookReceiverQuery Parse(IQueryCollection queryCollection)
+        {
+            List<int> storeIds = new List<int>();
+            string[] storeIdParams = queryCollection["storeId"].ToArray();
+            if (storeIdParams.Length > 0)
+            {
+                foreach (var storeIdString in storeIdParams)
+                    if (int.TryParse(storeIdString, out int storeId))
+                        storeIds.Add(storeId);
+            }
+
+            return new WebhookReceiverQuery()
+            {
+                To = queryCollection["to"].ToArray(),
+                StoreIDs = storeIds,
+                Currency = queryCollection["currency"].FirstOrDefault(),
+                MetadataKey = queryCollection["metadataKey"].First() ?? "eancode"
+            };
         }
     }
 }

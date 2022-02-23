@@ -25,7 +25,7 @@ namespace Flipdish.Recruiting.UnitTest.Utils.Factories
             mock.SetupGet(m=> m["to"]).Returns(to);
             mock.SetupGet(m=> m["currency"]).Returns(currency);
             mock.SetupGet(m=> m["metadataKey"]).Returns(metadataKey);
-            mock.SetupGet(m=> m["storeIds"]).Returns(storeIds);
+            mock.SetupGet(m=> m["storeId"]).Returns(storeIds);
 
             return mock;
         }

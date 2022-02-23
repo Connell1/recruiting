@@ -20,14 +20,14 @@ namespace Flipdish.Recruiting.UnitTest.Services
         public void Parse()
         {
             var queryCollection = QueryCollectionFactory.Create().SetupQuery();
-            var query = service.Parse<WebhookReceiverQuery>(queryCollection.Object);
+            var query = service.Parse(queryCollection.Object);
 
             Assert.Contains("to1", query.To);
             Assert.Contains("to2", query.To);
             Assert.Equal("eur", query.Currency);
             Assert.Equal("eancode", query.MetadataKey);
-            Assert.Contains(1, query.StoreID);
-            Assert.Contains(2, query.StoreID);
+            Assert.Contains(1, query.StoreIDs);
+            Assert.Contains(2, query.StoreIDs);
         }
     }
 }
