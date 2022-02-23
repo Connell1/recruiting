@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Flipdish.Recruiting.WebhookReceiver.Models;
 using System.Collections.Generic;
 
-namespace Flipdish.Recruiting.WebhookReceiver
+namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
     public static class WebhookReceiver
     {
