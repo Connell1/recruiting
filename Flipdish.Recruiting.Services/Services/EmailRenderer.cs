@@ -8,10 +8,10 @@ using System.Linq;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Flipdish.Recruiting.Domain.Models;
-using Flipdish.Recruiting.WebhookReceiver.Helpers;
+using Flipdish.Recruiting.Services.Helpers;
 using NetBarcode;
 
-namespace Flipdish.Recruiting.WebhookReceiver
+namespace Flipdish.Recruiting.Services.Services
 {
     internal class EmailRenderer : IDisposable
     {
@@ -497,7 +497,7 @@ namespace Flipdish.Recruiting.WebhookReceiver
             if (_imagesWithNames == null)
                 return;
 
-            foreach(var kvp in _imagesWithNames)
+            foreach (var kvp in _imagesWithNames)
             {
                 kvp.Value.Dispose();
             }

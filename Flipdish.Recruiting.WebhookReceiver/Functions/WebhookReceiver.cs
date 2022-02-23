@@ -19,12 +19,15 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
     {
         private readonly IEmailService emailService;
         private readonly IQueryParsingService queryParsingService;
+        private readonly IEmailRenderingService emailRenderingService;
 
         public WebhookReceiver(IEmailService emailService,
-            IQueryParsingService queryParsingService)
+            IQueryParsingService queryParsingService,
+            IEmailRenderingService emailRenderingService)
         {
             this.emailService = emailService;
             this.queryParsingService = queryParsingService;
+            this.emailRenderingService = emailRenderingService;
         }
 
         [FunctionName("WebhookReceiver")]
@@ -58,13 +61,19 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                     currency = (Currency)currencyObject;
                 }
 
-                using EmailRenderer emailRenderer = new EmailRenderer(orderCreatedEvent.Order, orderCreatedEvent.AppId, query.MetadataKey, context.FunctionAppDirectory, log, currency);
-                
-                var emailOrder = emailRenderer.RenderEmailOrder();
+                emailRenderingService.CreateRenderer(log, new EmailRenderingOptions()
+                {
+                    Order = orderCreatedEvent.Order,
+                    AppId = orderCreatedEvent.AppId,
+                    MetadataKey = query.MetadataKey,
+                    AppDirectory = context.FunctionAppDirectory,
+                    Currency = currency
+                });
+                var emailOrder = emailRenderingService.RenderEmailOrder();
 
                 try
                 {
-                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
+                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder, emailRenderingService.ImagesWithName);
                 }
                 catch(Exception ex)
                 {

@@ -9,6 +9,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.22" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.22" />
+    <PackageReference Include="NetBarcode" Version="1.1.0" />
+  <PackageReference Include="DotLiquid" Version="2.0.366" />
   </ItemGroup>
 
   <ItemGroup>

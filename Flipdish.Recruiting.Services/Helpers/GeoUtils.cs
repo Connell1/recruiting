@@ -3,7 +3,7 @@ using Flipdish.Recruiting.Domain.Models;
 using System;
 using System.Globalization;
 
-namespace Flipdish.Recruiting.WebhookReceiver.Helpers
+namespace Flipdish.Recruiting.Services.Helpers
 {
     public static class GeoUtils
     {

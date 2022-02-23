@@ -11,7 +11,8 @@ namespace Flipdish.Recruiting.Services.Extensions
         {
             return services
                 .AddTransient<Services.IEmailService, Services.EmailService>()
-                .AddTransient<Services.IQueryParsingService, Services.QueryParsingService>();
+                .AddTransient<Services.IQueryParsingService, Services.QueryParsingService>()
+                .AddTransient<Services.IEmailRenderingService, Services.EmailRenderingService>();
         }
     }
 }

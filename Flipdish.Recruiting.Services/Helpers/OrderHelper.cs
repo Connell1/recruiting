@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 
-namespace Flipdish.Recruiting.WebhookReceiver.Helpers
+namespace Flipdish.Recruiting.Services.Helpers
 {
     public static class OrderHelper
     {
