@@ -7,7 +7,7 @@ using Moq;
 
 namespace Flipdish.Recruiting.UnitTest.Utils.Factories
 {
-    internal static class QueryCollectionFactory
+    internal static class MockQueryCollectionFactory
     {
         public static Mock<IQueryCollection> Create()
         {

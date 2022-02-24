@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Flipdish.Recruiting.Services.Services;
 using Flipdish.Recruiting.Domain.Models.Input;
 using Flipdish.Recruiting.Domain.Models.Output;
+using Flipdish.Recruiting.Domain.Bus;
+using Flipdish.Recruiting.Domain.Commands;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
@@ -20,15 +22,15 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
     {
         private readonly IEmailService emailService;
         private readonly IQueryParsingService queryParsingService;
-        private readonly IEmailRenderingService emailRenderingService;
+        private readonly IMediator mediator;
 
         public WebhookReceiver(IEmailService emailService,
             IQueryParsingService queryParsingService,
-            IEmailRenderingService emailRenderingService)
+            IMediator mediator)
         {
             this.emailService = emailService;
             this.queryParsingService = queryParsingService;
-            this.emailRenderingService = emailRenderingService;
+            this.mediator = mediator;
         }
 
         [FunctionName("WebhookReceiver")]
@@ -62,14 +64,25 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                     currency = (Currency)currencyObject;
                 }
 
-                EmailRenderingResult emailOrder = emailRenderingService.RenderEmailOrder(log, new EmailRenderingOptions()
+                EmailRenderingResult emailOrder = (await mediator.SendCommand<SendEmailCommand, SendEmailCommandResponse>(new SendEmailCommand()
                 {
-                    Order = orderCreatedEvent.Order,
-                    AppId = orderCreatedEvent.AppId,
-                    MetadataKey = query.MetadataKey,
-                    AppDirectory = context.FunctionAppDirectory,
-                    Currency = currency
-                });
+                    EmailRenderingOptions = new EmailRenderingOptions()
+                    {
+                        Order = orderCreatedEvent.Order,
+                        AppId = orderCreatedEvent.AppId,
+                        MetadataKey = query.MetadataKey,
+                        AppDirectory = context.FunctionAppDirectory,
+                        Currency = currency
+                    }
+                })).EmailRenderingResult;
+                //EmailRenderingResult emailOrder = emailRenderingService.RenderEmailOrder(log, new EmailRenderingOptions()
+                //{
+                //    Order = orderCreatedEvent.Order,
+                //    AppId = orderCreatedEvent.AppId,
+                //    MetadataKey = query.MetadataKey,
+                //    AppDirectory = context.FunctionAppDirectory,
+                //    Currency = currency
+                //});
 
                 try
                 {

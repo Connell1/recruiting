@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace Flipdish.Recruiting.UnitTest.Services
+namespace Flipdish.Recruiting.UnitTest.Services.Services
 {
     public class QueryParsingServiceTests
     {
@@ -19,7 +19,7 @@ namespace Flipdish.Recruiting.UnitTest.Services
         [Fact]
         public void Parse()
         {
-            var queryCollection = QueryCollectionFactory.Create().SetupQuery();
+            var queryCollection = MockQueryCollectionFactory.Create().SetupQuery();
             var query = service.Parse(queryCollection.Object);
 
             Assert.Contains("to1", query.To);
