@@ -8,15 +8,33 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Flipdish.Recruiting.WebhookReceiver.Models;
+using Flipdish.Recruiting.Domain.Models;
 using System.Collections.Generic;
+using Flipdish.Recruiting.Services.Services;
+using Flipdish.Recruiting.Domain.Models.Input;
+using Flipdish.Recruiting.Domain.Models.Output;
+using Flipdish.Recruiting.Domain.Bus;
+using Flipdish.Recruiting.Domain.Commands;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
-    public static class WebhookReceiver
+    public class WebhookReceiver
     {
+        private readonly IEmailService emailService;
+        private readonly IQueryParsingService queryParsingService;
+        private readonly IMediator mediator;
+
+        public WebhookReceiver(IEmailService emailService,
+            IQueryParsingService queryParsingService,
+            IMediator mediator)
+        {
+            this.emailService = emailService;
+            this.queryParsingService = queryParsingService;
+            this.mediator = mediator;
+        }
+
         [FunctionName("WebhookReceiver")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
@@ -25,70 +43,42 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
             try
             {
                 log.LogInformation("C# HTTP trigger function processed a request.");
-
-                OrderCreatedWebhook orderCreatedWebhook;
-
-                string test = req.Query["test"];
-                if(req.Method == "GET" && !string.IsNullOrEmpty(test))
-                {
-
-                    var templateFilePath = Path.Combine(context.FunctionAppDirectory, "TestWebhooks", test);
-                    var testWebhookJson = new StreamReader(templateFilePath).ReadToEnd();
-
-                    orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(testWebhookJson);
-                }
-                else if (req.Method == "POST")
-                {
-                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                    orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(requestBody);
-                }
-                else
-                {
-                    throw new Exception("No body found or test param.");
-                }
-                OrderCreatedEvent orderCreatedEvent = orderCreatedWebhook.Body;
+                OrderCreatedEvent orderCreatedEvent = await GetOrderCreatedWebhook(req, context);
+                WebhookReceiverQuery query = queryParsingService.Parse(req.Query);
 
                 orderId = orderCreatedEvent.Order.OrderId;
-                List<int> storeIds = new List<int>();
-                string[] storeIdParams = req.Query["storeId"].ToArray();
-                if (storeIdParams.Length > 0)
-                {
-                    foreach (var storeIdString in storeIdParams)
-                    {
-                        int storeId = 0;
-                        try 
-                        {
-                            storeId = int.Parse(storeIdString);
-                        }
-                        catch(Exception) {}
-                        
-                        storeIds.Add(storeId);
-                    }
 
-                    if (!storeIds.Contains(orderCreatedEvent.Order.Store.Id.Value))
+                if (query.StoreIDs.Any())
+                {
+                    if (!query.StoreIDs.Contains(orderCreatedEvent.Order.Store.Id.Value))
                     {
                         log.LogInformation($"Skipping order #{orderId}");
                         return new ContentResult { Content = $"Skipping order #{orderId}", ContentType = "text/html" };
                     }
                 }
 
-
                 Currency currency = Currency.EUR;
-                var currencyString = req.Query["currency"].FirstOrDefault();
+                var currencyString = query.Currency;
                 if(!string.IsNullOrEmpty(currencyString) && Enum.TryParse(typeof(Currency), currencyString.ToUpper(), out object currencyObject))
                 {
                     currency = (Currency)currencyObject;
                 }
 
-                var barcodeMetadataKey = req.Query["metadataKey"].First() ?? "eancode";
-
-                using EmailRenderer emailRenderer = new EmailRenderer(orderCreatedEvent.Order, orderCreatedEvent.AppId, barcodeMetadataKey, context.FunctionAppDirectory, log, currency);
-                
-                var emailOrder = emailRenderer.RenderEmailOrder();
+                EmailRenderingResult emailOrder = (await mediator.SendCommand<SendEmailCommand, SendEmailCommandResponse>(new SendEmailCommand()
+                {
+                    EmailRenderingOptions = new EmailRenderingOptions()
+                    {
+                        Order = orderCreatedEvent.Order,
+                        AppId = orderCreatedEvent.AppId,
+                        MetadataKey = query.MetadataKey,
+                        AppDirectory = context.FunctionAppDirectory,
+                        Currency = currency
+                    }
+                })).EmailRenderingResult;
 
                 try
                 {
-                    EmailService.Send("", req.Query["to"], $"New Order #{orderId}", emailOrder, emailRenderer._imagesWithNames);
+                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder.Content, emailOrder.Images);
                 }
                 catch(Exception ex)
                 {
@@ -97,13 +87,38 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
 
                 log.LogInformation($"Email sent for order #{orderId}.", new { orderCreatedEvent.Order.OrderId });
 
-                return new ContentResult { Content = emailOrder, ContentType = "text/html" };
+                return new ContentResult { Content = emailOrder.Content, ContentType = "text/html" };
             }
             catch(Exception ex)
             {
                 log.LogError(ex, $"Error occured during processing order #{orderId}");
                 throw ex;
             }
+        }
+
+        private async Task<OrderCreatedEvent> GetOrderCreatedWebhook(HttpRequest req, ExecutionContext context)
+        {
+            OrderCreatedWebhook orderCreatedWebhook;
+
+            string testFile = req.Query["test"];
+            if (req.Method == HttpMethods.Get && !string.IsNullOrEmpty(testFile))
+            {
+
+                var templateFilePath = Path.Combine(context.FunctionAppDirectory, "TestWebhooks", testFile);
+                var testWebhookJson = new StreamReader(templateFilePath).ReadToEnd();
+
+                orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(testWebhookJson);
+            }
+            else if (req.Method == HttpMethods.Post)
+            {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                orderCreatedWebhook = JsonConvert.DeserializeObject<OrderCreatedWebhook>(requestBody);
+            }
+            else
+            {
+                throw new Exception("No body found or test param.");
+            }
+            return orderCreatedWebhook.Body;
         }
     }
 }

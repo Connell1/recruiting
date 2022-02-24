@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29418.71
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flipdish.Recruiting.WebhookReceiver", "Flipdish.Recruiting.WebhookReceiver\Flipdish.Recruiting.WebhookReceiver.csproj", "{DB815CB0-419B-4824-A1CD-17BCCB12899C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.Domain", "Flipdish.Recruiting.Domain\Flipdish.Recruiting.Domain.csproj", "{DCB99FBF-1D2B-49F9-AA59-2FFD5E9F52B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.UnitTest", "Flipdish.Recruiting.UnitTest\Flipdish.Recruiting.UnitTest.csproj", "{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flipdish.Recruiting.Services", "Flipdish.Recruiting.Services\Flipdish.Recruiting.Services.csproj", "{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{DB815CB0-419B-4824-A1CD-17BCCB12899C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB815CB0-419B-4824-A1CD-17BCCB12899C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB815CB0-419B-4824-A1CD-17BCCB12899C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCB99FBF-1D2B-49F9-AA59-2FFD5E9F52B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCB99FBF-1D2B-49F9-AA59-2FFD5E9F52B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCB99FBF-1D2B-49F9-AA59-2FFD5E9F52B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCB99FBF-1D2B-49F9-AA59-2FFD5E9F52B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CE57F67-D82F-48E7-B02A-7A8A9C39F53B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C45A9E0-675D-4319-89D5-B17C8ADAA31E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
