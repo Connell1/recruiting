@@ -12,6 +12,7 @@ using Flipdish.Recruiting.Domain.Models;
 using System.Collections.Generic;
 using Flipdish.Recruiting.Services.Services;
 using Flipdish.Recruiting.Domain.Models.Input;
+using Flipdish.Recruiting.Domain.Models.Output;
 
 namespace Flipdish.Recruiting.WebhookReceiver.Functions
 {
@@ -61,7 +62,7 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                     currency = (Currency)currencyObject;
                 }
 
-                emailRenderingService.CreateRenderer(log, new EmailRenderingOptions()
+                EmailRenderingResult emailOrder = emailRenderingService.RenderEmailOrder(log, new EmailRenderingOptions()
                 {
                     Order = orderCreatedEvent.Order,
                     AppId = orderCreatedEvent.AppId,
@@ -69,11 +70,10 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                     AppDirectory = context.FunctionAppDirectory,
                     Currency = currency
                 });
-                var emailOrder = emailRenderingService.RenderEmailOrder();
 
                 try
                 {
-                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder, emailRenderingService.ImagesWithName);
+                    await emailService.Send("", query.To, $"New Order #{orderId}", emailOrder.Content, emailOrder.Images);
                 }
                 catch(Exception ex)
                 {
@@ -82,7 +82,7 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
 
                 log.LogInformation($"Email sent for order #{orderId}.", new { orderCreatedEvent.Order.OrderId });
 
-                return new ContentResult { Content = emailOrder, ContentType = "text/html" };
+                return new ContentResult { Content = emailOrder.Content, ContentType = "text/html" };
             }
             catch(Exception ex)
             {
