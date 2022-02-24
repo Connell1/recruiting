@@ -75,14 +75,6 @@ namespace Flipdish.Recruiting.WebhookReceiver.Functions
                         Currency = currency
                     }
                 })).EmailRenderingResult;
-                //EmailRenderingResult emailOrder = emailRenderingService.RenderEmailOrder(log, new EmailRenderingOptions()
-                //{
-                //    Order = orderCreatedEvent.Order,
-                //    AppId = orderCreatedEvent.AppId,
-                //    MetadataKey = query.MetadataKey,
-                //    AppDirectory = context.FunctionAppDirectory,
-                //    Currency = currency
-                //});
 
                 try
                 {
